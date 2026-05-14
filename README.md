@@ -76,5 +76,3 @@ The generator uses a custom-built iterative allocation strategy:
 3.  **Conflict Prevention**: Checks for adjacent duplicate subjects and ensures breaks remain sacred.
 
 ---
-
-Built with ❤️ by [Your Name/GitHub Profile]
