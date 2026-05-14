@@ -2,6 +2,8 @@
 
 **Smart Timetable** is a high-performance, enterprise-grade scheduling application built to automate the complex task of academic planning. Featuring a stunning **Glassmorphism UI** and an intelligent balancing algorithm, it transforms hours of manual work into a single click.
 
+![Final Timetable Preview](./assets/timetable.png)
+
 ![Smart Timetable Banner](https://img.shields.io/badge/Status-Production--Ready-brightgreen?style=for-the-badge)
 ![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20Django%20%7C%20MongoDB-blue?style=for-the-badge)
 
@@ -12,7 +14,7 @@
 -   **🎨 Premium UI/UX**: A state-of-the-art interface built with **React**, **Tailwind CSS**, and **Framer Motion**, featuring smooth transitions and a vibrant dark mode.
 -   **📄 Professional PDF Export**: Generate high-quality, landscape-oriented PDF timetables with custom branding and clear academic titles.
 -   **⚙️ Branch Management**: Full CRUD capabilities to manage departments and semesters dynamically.
--   **☕ Optimized Breaks**: Built-in logic for mandatory short breaks and lunch periods.
+-   **☕ Optimized Breaks**: Built-in logic for 11:00 AM short breaks and 1:30 PM lunch periods.
 
 ## 🛠️ Technology Stack
 
@@ -31,6 +33,12 @@
 
 ### Database
 -   **MongoDB** (Flexible NoSQL storage for complex scheduling data)
+
+## 📸 Interface Preview
+
+| Step 1: Department | Step 2: Semester | Step 3: Subjects |
+| :--- | :--- | :--- |
+| ![Dashboard](./assets/dashboard.png) | ![Semester](./assets/semester.png) | ![Subjects](./assets/subjects.png) |
 
 ## 🚀 Getting Started
 
@@ -61,12 +69,6 @@
    npm run dev
    ```
 
-## 📸 Screenshots
-
-| Dashboard | Subject Entry | Timetable View |
-| :--- | :--- | :--- |
-| ![Dash Placeholder](https://via.placeholder.com/300x200?text=Dashboard+View) | ![Subject Placeholder](https://via.placeholder.com/300x200?text=Subject+Input) | ![Table Placeholder](https://via.placeholder.com/300x200?text=Timetable+Preview) |
-
 ## 🧠 The Algorithm
 The generator uses a custom-built iterative allocation strategy:
 1.  **Lab Prioritization**: Allocates multi-hour lab sessions first to ensure consecutive slots.
@@ -74,3 +76,4 @@ The generator uses a custom-built iterative allocation strategy:
 3.  **Conflict Prevention**: Checks for adjacent duplicate subjects and ensures breaks remain sacred.
 
 ---
+
