@@ -42,7 +42,7 @@
 
 | Step 3: Theory Subjects | Step 4: Lab Subjects |
 | :--- | :--- |
-| ![Subjects](./assets/subjects.png) | ![Labs](./assets/labs.png) |
+| ![Subjects](./assets/subjects.png) | ![Labs](./assets/labs.png) | ![final_timetable](./assets/final_timetable.png)
 
 ## 🚀 Getting Started
 
@@ -80,5 +80,3 @@ The generator uses a custom-built iterative allocation strategy:
 3.  **Conflict Prevention**: Checks for adjacent duplicate subjects and ensures breaks remain sacred.
 
 ---
-
-Built with ❤️ by [Your Name/GitHub Profile]
