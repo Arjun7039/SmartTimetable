@@ -63,8 +63,6 @@
 
 ## 📸 Screenshots
 
-*(Add your beautiful screenshots here!)*
-
 | Dashboard | Subject Entry | Timetable View |
 | :--- | :--- | :--- |
 | ![Dash Placeholder](https://via.placeholder.com/300x200?text=Dashboard+View) | ![Subject Placeholder](https://via.placeholder.com/300x200?text=Subject+Input) | ![Table Placeholder](https://via.placeholder.com/300x200?text=Timetable+Preview) |
