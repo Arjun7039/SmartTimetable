@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enter Subject and Lab Details</title>
+  <link rel="stylesheet" href="{% static 'smarttimetable/style.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>Step 3: Enter Subject and Lab Details</h1>
+    <form method="post">
+      {% csrf_token %}
+      
+      <h2 style="margin-top: 1.5rem;">Subjects</h2>
+      {% for i in subject_range %}
+        <div class="input-group" style="margin-bottom: 1.2rem;">
+          <label for="subject_{{ i }}" class="label-bold">Subject {{ i }} Name:</label>
+          <input type="text" name="subject_{{ i }}" id="subject_{{ i }}" required class="input-field">
+
+          <label for="teacher_{{ i }}" class="label-bold" style="margin-top: 0.6rem;">Teacher Name:</label>
+          <input type="text" name="teacher_{{ i }}" id="teacher_{{ i }}" required class="input-field">
+
+          <label for="hours_{{ i }}" class="label-bold" style="margin-top: 0.6rem;">Weekly Hours:</label>
+          <input type="number" name="hours_{{ i }}" id="hours_{{ i }}" min="1" required class="input-field">
+        </div>
+      {% endfor %}
+
+      <h2 style="margin-top: 2rem;">Labs</h2>
+      {% for i in lab_range %}
+        <div class="input-group" style="margin-bottom: 1.2rem;">
+          <label for="lab_name_{{ i }}" class="label-bold">Lab {{ i }} Name:</label>
+          <input type="text" name="lab_name_{{ i }}" id="lab_name_{{ i }}" required class="input-field">
+
+          <label for="lab_teacher_{{ i }}" class="label-bold" style="margin-top: 0.6rem;">Teacher Name:</label>
+          <input type="text" name="lab_teacher_{{ i }}" id="lab_teacher_{{ i }}" required class="input-field">
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn" style="margin-top: 2rem;">Generate Timetable</button>
+    </form>
+  </div>
+</body>
+</html>

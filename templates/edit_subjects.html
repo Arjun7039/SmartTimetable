@@ -1,0 +1,22 @@
+<form method="POST">
+  {% csrf_token %}
+  <h2>Edit Subjects</h2>
+
+  {% for subject in subjects %}
+    <div class="subject-entry" style="margin-bottom: 1rem;">
+      <label for="subject_{{ forloop.counter0 }}">Subject Name:</label>
+      <input type="text" id="subject_{{ forloop.counter0 }}" name="subject_{{ forloop.counter0 }}" value="{{ subject.subject }}" required>
+
+      <label for="teacher_{{ forloop.counter0 }}">Teacher Name:</label>
+      <input type="text" id="teacher_{{ forloop.counter0 }}" name="teacher_{{ forloop.counter0 }}" value="{{ subject.teacher }}" required>
+
+      <label for="hours_{{ forloop.counter0 }}">Max Hours Per Week:</label>
+      <input type="number" id="hours_{{ forloop.counter0 }}" name="hours_{{ forloop.counter0 }}" value="{{ subject.hours }}" min="1" required>
+    </div>
+  {% endfor %}
+
+  <!-- Hidden input to pass the count of subjects -->
+  <input type="hidden" name="total_subjects" value="{{ subjects|length }}">
+
+  <button type="submit" class="btn">Save Changes</button>
+</form>

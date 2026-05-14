@@ -1,0 +1,25 @@
+# Node
+node_modules/
+dist/
+dist-ssr
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+ENV/
+.env
+
+# Database
+*.sqlite3
+db.sqlite3-journal
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

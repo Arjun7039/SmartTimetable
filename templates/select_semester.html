@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Select Semester</title>
+    <link rel="stylesheet" href="{% static 'smarttimetable/style.css' %}" />
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Step 2: Select Your Semester</h1>
+        <form method="POST" class="form">
+            {% csrf_token %}
+            <label for="semester" class="label-bold">Semester</label>
+            <select name="semester" id="semester" class="input-field" required>
+                <option value="" disabled selected>-- Select Semester --</option>
+                <option value="1">1st Semester</option>
+                <option value="2">2nd Semester</option>
+                <option value="3">3rd Semester</option>
+                <option value="4">4th Semester</option>
+                <option value="5">5th Semester</option>
+                <option value="6">6th Semester</option>
+                <option value="7">7th Semester</option>
+                <option value="8">8th Semester</option>
+            </select>
+            <button type="submit" class="btn" style="margin-top: 1.5rem;">Next</button>
+        </form>
+    </div>
+</body>
+</html>

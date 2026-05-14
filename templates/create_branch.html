@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create New Branch</title>
+  <link rel="stylesheet" href="{% static 'smarttimetable/style.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>Create a New Branch</h1>
+    <form method="post">
+      {% csrf_token %}
+      <label for="branch_name" class="sr-only">Branch Name</label>
+      <input 
+        id="branch_name"
+        type="text" 
+        name="branch_name" 
+        placeholder="Enter new branch name" 
+        required 
+        autocomplete="off"
+        style="padding: 0.6rem; font-size: 1rem; border-radius: 6px; border: none; width: 100%; margin-top: 1rem;" 
+      />
+      <button class="btn" type="submit" style="margin-top: 1.5rem;">Add Branch</button>
+    </form>
+    <p style="margin-top: 1rem;">
+      <a href="{% url 'timetable_input' %}" style="color: #3498db; text-decoration: underline;">&larr; Back to branch selection</a>
+    </p>
+  </div>
+</body>
+</html>

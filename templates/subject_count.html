@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enter Number of Subjects and Labs</title>
+  <link rel="stylesheet" href="{% static 'smarttimetable/style.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>Step 2: Subject and Lab Count</h1>
+    <form method="post">
+      {% csrf_token %}
+      
+      <label for="subject_count" class="label-bold">Enter the number of subjects:</label>
+      <input 
+        type="number" 
+        name="subject_count" 
+        id="subject_count" 
+        min="1" 
+        max="20" 
+        required 
+        class="input-field"
+      >
+
+      <label for="lab_count" class="label-bold" style="margin-top:1rem; display:block;">
+        Enter the number of labs:
+      </label>
+      <input 
+        type="number" 
+        name="lab_count" 
+        id="lab_count" 
+        min="0" 
+        max="4" 
+        required 
+        class="input-field"
+      >
+
+      <button type="submit" class="btn" style="margin-top: 1.5rem;">Next</button>
+    </form>
+  </div>
+</body>
+</html>

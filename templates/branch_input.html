@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Select Branch</title>
+  <link rel="stylesheet" href="{% static 'smarttimetable/style.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>Generate Your Timetable</h1>
+    <p>Please select your branch to continue</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <select name="branch" required style="padding: 0.6rem; font-size: 1rem; border-radius: 6px; border: none; width: 100%; margin-top: 1rem;">
+        <option value="" disabled selected>-- Select Branch --</option>
+        {% for b in branches %}
+          <option value="{{ b.branch_name }}">{{ b.branch_name }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Create new branch link -->
+      <p style="margin-top: 1rem;">
+        Don’t see your branch? 
+        <a href="{% url 'create_branch' %}" style="color: #3498db; text-decoration: underline;">Create a new branch</a>
+      </p>
+
+      <button class="btn" type="submit" style="margin-top: 1.5rem;">Generate Timetable</button>
+    </form>
+  </div>
+</body>
+</html>

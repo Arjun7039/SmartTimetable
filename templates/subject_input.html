@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Enter Subject and Lab Details</title>
+  <link rel="stylesheet" href="{% static 'smarttimetable/style.css' %}" />
+</head>
+<body>
+  <div class="container">
+    <h1>Step 3: Enter Subject and Lab Details</h1>
+    <form method="post">
+      {% csrf_token %}
+
+      {% for i in subject_range %}
+      <div class="subject-block">
+        <h3>Subject {{ i|add:1 }}</h3>
+        <input type="text" name="subject_{{ i }}" placeholder="Subject Name" required class="input-field" />
+        <input type="text" name="subject_teacher_{{ i }}" placeholder="Teacher" required class="input-field" />
+        <input type="number" name="subject_hours_{{ i }}" placeholder="Max Hours/Week" required min="1" class="input-field" />
+      </div>
+      {% endfor %}
+
+      {% for i in lab_range %}
+      <div class="lab-block">
+        <h3>Lab {{ i|add:1 }}</h3>
+        <input type="text" name="lab_{{ i }}" placeholder="Lab Name" required class="input-field" />
+        <input type="text" name="lab_teacher_{{ i }}" placeholder="Lab Teacher" required class="input-field" />
+        <input type="number" name="lab_hours_{{ i }}" placeholder="Lab Hours (2/4 etc.)" required min="1" class="input-field" />
+      </div>
+      {% endfor %}
+
+      <button type="submit" class="btn">Generate Timetable</button>
+    </form>
+  </div>
+</body>
+</html>

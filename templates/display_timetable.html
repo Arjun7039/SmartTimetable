@@ -1,0 +1,66 @@
+{% load static %}
+{% load dict_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Timetable</title>
+  <link rel="stylesheet" href="{% static 'smarttimetable/style.css' %}">
+  <style>
+    .lunch-cell {
+      background-color: #fff3cd;
+      color: #856404;
+      font-weight: bold;
+      text-align: center;
+    }
+    .lab-cell {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      font-weight: bold;
+      text-align: center;
+    }
+    .empty-cell {
+      color: #ccc;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Your Timetable</h1>
+    <div class="scrollable-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th>
+            {% for slot in time_slots %}
+              <th>{{ slot }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for day in days %}
+            <tr>
+              <td>{{ day }}</td>
+              {% for slot in time_slots %}
+                {% with cell=timetable|get_item:day|get_item:slot %}
+                  {% if cell == "LUNCH" %}
+                    <td class="lunch-cell">LUNCH</td>
+                  {% elif "lab" in cell|lower %}
+                    <td class="lab-cell">🧪 {{ cell|linebreaksbr }}</td>
+                  {% elif cell == "—" %}
+                    <td class="empty-cell">—</td>
+                  {% else %}
+                    <td>{{ cell|linebreaksbr }}</td>
+                  {% endif %}
+                {% endwith %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
