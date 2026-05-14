@@ -2,7 +2,7 @@
 
 **Smart Timetable** is a high-performance, enterprise-grade scheduling application built to automate the complex task of academic planning. Featuring a stunning **Glassmorphism UI** and an intelligent balancing algorithm, it transforms hours of manual work into a single click.
 
-![Final Timetable Preview](./assets/timetable.png)
+![Final Timetable Preview](./assets/final_timetable.png)
 
 ![Smart Timetable Banner](https://img.shields.io/badge/Status-Production--Ready-brightgreen?style=for-the-badge)
 ![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20Django%20%7C%20MongoDB-blue?style=for-the-badge)
@@ -36,9 +36,13 @@
 
 ## 📸 Interface Preview
 
-| Step 1: Department | Step 2: Semester | Step 3: Subjects |
-| :--- | :--- | :--- |
-| ![Dashboard](./assets/dashboard.png) | ![Semester](./assets/semester.png) | ![Subjects](./assets/subjects.png) |
+| Step 1: Departments | Step 2: Semesters |
+| :--- | :--- |
+| ![Departments](./assets/departments.png) | ![Semesters](./assets/semester.png) |
+
+| Step 3: Theory Subjects | Step 4: Lab Subjects |
+| :--- | :--- |
+| ![Subjects](./assets/subjects.png) | ![Labs](./assets/labs.png) |
 
 ## 🚀 Getting Started
 
@@ -77,3 +81,4 @@ The generator uses a custom-built iterative allocation strategy:
 
 ---
 
+Built with ❤️ by [Your Name/GitHub Profile]
