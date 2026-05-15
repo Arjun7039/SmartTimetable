@@ -11,10 +11,13 @@ from .timetable_generator import generate_timetable_logic
 import io
 import json
 import xlsxwriter
+import logging
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import landscape, A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
+
+logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 def api_download_pdf(request):
@@ -118,11 +121,19 @@ def api_get_subjects(request):
 
 @api_view(['POST'])
 def api_generate_timetable(request):
+    # --- DEEP DIAGNOSTICS ---
+    print("-----------------------------------------")
+    print(f"DEBUG: Received POST request to /api/generate/")
+    print(f"DEBUG: Content-Type: {request.content_type}")
+    print(f"DEBUG: Data Received: {request.data}")
+    print("-----------------------------------------")
+
     branch_name = (request.data.get('branch') or '').strip()
     semester = (request.data.get('semester') or '').strip()
     subjects_data = request.data.get('subjects')
 
     if not subjects_data:
+        print("DEBUG ERROR: No subjects provided in request.data")
         return Response({"error": "No subjects provided"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Validate each subject has the required data
@@ -134,6 +145,7 @@ def api_generate_timetable(request):
         type_ = s.get('type')
         
         if not name or not teacher or hours is None:
+            print(f"DEBUG ERROR: Incomplete data for subject. Name='{name}', Teacher='{teacher}', Hours='{hours}'")
             return Response({"error": f"Incomplete data for subject '{name or 'Unknown'}'. All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
         
         validated_subjects.append({
@@ -151,8 +163,10 @@ def api_generate_timetable(request):
         ]
         
         if not branch_name or not semester:
+            print(f"DEBUG ERROR: Missing branch_name='{branch_name}' or semester='{semester}'")
             return Response({"error": "Branch name and semester are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        print(f"DEBUG: Upserting to MongoDB for {branch_name} - {semester}")
         Branch.objects(branch_name=branch_name, semester=semester).modify(
             upsert=True, 
             new=True, 
@@ -160,6 +174,7 @@ def api_generate_timetable(request):
         )
 
         # Generate timetable
+        print(f"DEBUG: Calling generate_timetable_logic with {len(validated_subjects)} subjects")
         headers, table = generate_timetable_logic(validated_subjects)
 
         # Prepare JSON-friendly timetable
@@ -176,6 +191,7 @@ def api_generate_timetable(request):
                     day_data["slots"][time_slots[i]] = cell
             formatted_timetable.append(day_data)
 
+        print("DEBUG: Timetable generated successfully. Returning response.")
         return Response({
             "branch": branch_name,
             "semester": semester,
@@ -183,6 +199,7 @@ def api_generate_timetable(request):
             "timetable": formatted_timetable
         })
     except Exception as e:
+        print(f"DEBUG CRITICAL ERROR: {str(e)}")
         return Response({"error": f"Backend processing error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # --- EXISTING TEMPLATE VIEWS ---
