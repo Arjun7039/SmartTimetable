@@ -1,6 +1,7 @@
 import React from 'react';
 import { Download, Share2, FileText, Table as TableIcon, RefreshCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { API_BASE_URL } from '../api';
 
 const TimetableDisplay = ({ data, onReset }) => {
   if (!data) return null;
@@ -9,7 +10,7 @@ const TimetableDisplay = ({ data, onReset }) => {
 
   const handleDownloadPDF = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/download-pdf/', {
+      const response = await fetch(`${API_BASE_URL}/api/download-pdf/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

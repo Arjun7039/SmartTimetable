@@ -5,3 +5,7 @@ mongoengine
 reportlab
 xlsxwriter
 requests
+gunicorn
+whitenoise
+python-dotenv
+dj-database-url
