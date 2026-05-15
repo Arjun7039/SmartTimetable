@@ -7,23 +7,29 @@
 ![Smart Timetable Banner](https://img.shields.io/badge/Status-Production--Ready-brightgreen?style=for-the-badge)
 ![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20Django%20%7C%20MongoDB-blue?style=for-the-badge)
 
+## 🏗️ Project Structure
+
+The project is divided into two main components:
+-   **`/frontend`**: React application built with Vite and Tailwind CSS.
+-   **`/backend`**: Django REST Framework API with MongoDB integration.
+
 ## ✨ Key Features
 
--   **🤖 Intelligent Scheduling**: Advanced balancing logic that prevents class overcrowding and ensures an even distribution across the 5-day week (including Fridays!).
--   **💾 Persistent Data Retrieval**: Automatically remembers previously entered subjects for any Branch/Semester combination, saving users from repetitive data entry.
--   **🎨 Premium UI/UX**: A state-of-the-art interface built with **React**, **Tailwind CSS**, and **Framer Motion**, featuring smooth transitions and a vibrant dark mode.
--   **📄 Professional PDF Export**: Generate high-quality, landscape-oriented PDF timetables with custom branding and clear academic titles.
+-   **🤖 Intelligent Scheduling**: Advanced balancing logic that prevents class overcrowding and ensures an even distribution across the 5-day week.
+-   **💾 Persistent Data Retrieval**: Automatically remembers previously entered subjects for any Branch/Semester combination.
+-   **🎨 Premium UI/UX**: A state-of-the-art interface featuring smooth transitions and a vibrant dark mode.
+-   **📄 Professional PDF Export**: Generate high-quality, landscape-oriented PDF timetables.
 -   **⚙️ Branch Management**: Full CRUD capabilities to manage departments and semesters dynamically.
--   **☕ Optimized Breaks**: Built-in logic for 11:00 AM short breaks and 1:30 PM lunch periods.
+-   **☕ Optimized Breaks**: Built-in logic for short breaks and lunch periods.
 
 ## 🛠️ Technology Stack
 
 ### Frontend
--   **React 18** (Vite-powered for ultra-fast builds)
--   **Tailwind CSS** (Custom theme & Glassmorphism effects)
+-   **React 18** (Vite-powered)
+-   **Tailwind CSS** (Glassmorphism effects)
 -   **Framer Motion** (Production-grade animations)
--   **Lucide React** (Consistent, high-quality iconography)
--   **Axios** (Robust API communication)
+-   **Lucide React** (Iconography)
+-   **Axios** (API communication)
 
 ### Backend
 -   **Django & DRF** (Scalable RESTful API)
@@ -32,7 +38,7 @@
 -   **CORS Headers** (Secure cross-origin communication)
 
 ### Database
--   **MongoDB** (Flexible NoSQL storage for complex scheduling data)
+-   **MongoDB** (Flexible NoSQL storage)
 
 ## 📸 Interface Preview
 
@@ -40,19 +46,13 @@
 | :--- | :--- |
 | ![Departments](./assets/departments.png) | ![Semesters](./assets/semester.png) |
 
-<<<<<<< HEAD
-| Step 3: Subjects | Step 4: Labs |
+| Step 3: Theory Subjects | Step 4: Lab Subjects |
 | :--- | :--- |
 | ![Subjects](./assets/subjects.png) | ![Labs](./assets/labs.png) |
 
 | Step 5: Final Result |
 | :--- |
 | ![Final Timetable](./assets/final_timetable.png) |
-=======
-| Step 3: Theory Subjects | Step 4: Lab Subjects |
-| :--- | :--- |
-| ![Subjects](./assets/subjects.png) | ![Labs](./assets/labs.png) | ![final_timetable](./assets/final_timetable.png)
->>>>>>> 21271f606502a2f4de88899f6299bd6df32f745d
 
 ## 🚀 Getting Started
 
@@ -62,7 +62,10 @@
 -   MongoDB (Running locally on port 27017)
 
 ### Backend Setup
-1. Navigate to the root directory.
+1. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
@@ -73,7 +76,10 @@
    ```
 
 ### Frontend Setup
-1. Navigate to the `frontend` directory.
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
 2. Install dependencies:
    ```bash
    npm install
@@ -90,8 +96,5 @@ The generator uses a custom-built iterative allocation strategy:
 3.  **Conflict Prevention**: Checks for adjacent duplicate subjects and ensures breaks remain sacred.
 
 ---
-<<<<<<< HEAD
 
-Built with ❤️ by [Your Name/GitHub Profile]
-=======
->>>>>>> 21271f606502a2f4de88899f6299bd6df32f745d
+Built with ❤️ by Arjun
