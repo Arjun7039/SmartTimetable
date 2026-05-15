@@ -88,6 +88,15 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'smarttimetable/static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# MongoDB Connection (MongoEngine)
+from mongoengine import connect
+mongodb_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/smarttimetable_db')
+try:
+    connect(host=mongodb_uri, alias='default')
+    print("Successfully connected to MongoDB via settings.py")
+except Exception as e:
+    print(f"Error connecting to MongoDB: {e}")
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
