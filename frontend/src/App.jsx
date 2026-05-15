@@ -36,10 +36,7 @@ function App() {
 
     try {
       const branchName = selectedBranch;
-      console.log(`[BROWSER] FETCHING: Branch="${branchName}", Semester="${semesterName}"`);
-      
       const data = await getSubjects(branchName, semesterName);
-      console.log(`[BROWSER] RECEIVED:`, data);
       
       if (data && data.length > 0) {
         const subjectsWithIds = data.map(s => ({ 
@@ -70,8 +67,10 @@ function App() {
       setTimetableData(result);
       setStep(4);
     } catch (err) {
-      alert("Error generating timetable. Make sure the Django server is running!");
-      console.error(err);
+      // Improved error message to help debugging
+      const errorMessage = err.response?.data?.error || err.message || "Unknown error";
+      alert(`Backend Error: ${errorMessage}\n\nPlease check that you filled all fields and the database is connected.`);
+      console.error("Full Error Object:", err);
     } finally {
       setLoading(false);
     }
