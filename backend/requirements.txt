@@ -2,10 +2,11 @@ django
 djangorestframework
 django-cors-headers
 mongoengine
-reportlab
-xlsxwriter
-requests
+pymongo[srv]
+dnspython
 gunicorn
 whitenoise
 python-dotenv
 dj-database-url
+reportlab
+xlsxwriter
