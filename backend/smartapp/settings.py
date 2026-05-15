@@ -9,9 +9,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-hqtg$w_5aun=n$)q0nl3$*tgeg_8@m72c0+ek($2&h*l9di-uw')
+
+# In production, DEBUG should be False. 
+# We'll allow setting it via env var, defaulting to True for now to see errors.
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost 127.0.0.1 .render.com').split(' ')
+# RELAXED ALLOWED_HOSTS to fix the 400 errors on Render
+ALLOWED_HOSTS = ['*'] 
 
 INSTALLED_APPS = [
     'django.contrib.admin',       
