@@ -90,12 +90,31 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # MongoDB Connection (MongoEngine)
 from mongoengine import connect
+import urllib.parse
+
 mongodb_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/smarttimetable_db')
+
+# Handle special characters in password if it's a standard mongodb+srv or mongodb string
+if "@" in mongodb_uri and (mongodb_uri.startswith("mongodb://") or mongodb_uri.startswith("mongodb+srv://")):
+    try:
+        # Split into protocol and the rest
+        protocol, rest = mongodb_uri.split("://", 1)
+        # Split into credentials and host
+        creds, host = rest.rsplit("@", 1)
+        if ":" in creds:
+            user, password = creds.split(":", 1)
+            # Escape user and password
+            user = urllib.parse.quote_plus(user)
+            password = urllib.parse.quote_plus(password)
+            mongodb_uri = f"{protocol}://{user}:{password}@{host}"
+    except Exception as e:
+        print(f"⚠️ Note: Could not auto-escape MongoDB URI: {e}")
+
 try:
     connect(host=mongodb_uri, alias='default')
-    print("Successfully connected to MongoDB via settings.py")
+    print("✅ Successfully connected to MongoDB via settings.py")
 except Exception as e:
-    print(f"Error connecting to MongoDB: {e}")
+    print(f"❌ MongoDB Connection Error: {e}")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
