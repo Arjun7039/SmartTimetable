@@ -33,10 +33,9 @@ def api_download_pdf(request):
     styles = getSampleStyleSheet()
     title_style = styles['Heading1']
     title_style.alignment = 1 # Center
-    elements.append(canvas.Canvas(buffer).setFont("Helvetica-Bold", 16))
-    from reportlab.platypus import Paragraph
+    
+    from reportlab.platypus import Paragraph, Spacer
     elements.append(Paragraph(f"Timetable for {branch} - {semester}", title_style))
-    from reportlab.platypus import Spacer
     elements.append(Spacer(1, 20))
 
     # Prepare table data
@@ -73,15 +72,15 @@ def api_download_pdf(request):
 
 @api_view(['GET'])
 def api_get_branches(request):
-    # Fetch all branches and return unique names
-    print(f"DIAGNOSTIC: Total documents in 'branch' collection: {Branch.objects.count()}")
-    branches = Branch.objects.only('branch_name')
-    branch_names = sorted(list(set(b.branch_name for b in branches)))
-    return Response(branch_names)
+    try:
+        branches = Branch.objects.only('branch_name')
+        branch_names = sorted(list(set(b.branch_name for b in branches)))
+        return Response(branch_names)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 @api_view(['DELETE'])
 def api_delete_branch(request, branch_name):
-    # Deletes all entries (all semesters) for this branch name
     Branch.objects(branch_name__iexact=branch_name).delete()
     return Response({"status": "deleted"})
 
@@ -90,9 +89,6 @@ def api_get_subjects(request):
     branch_name = (request.query_params.get('branch') or '').strip()
     semester = (request.query_params.get('semester') or '').strip()
     
-    print(f"DIAGNOSTIC: Searching for Branch: '{branch_name}', Semester: '{semester}'")
-    
-    # Fetch ALL entries for this branch name to manually compare in Python
     all_branch_entries = Branch.objects(branch_name__iexact=branch_name)
     
     target_branch = None
@@ -107,76 +103,93 @@ def api_get_subjects(request):
         req_sem_clean = req_sem.lower().replace("st", "").replace("nd", "").replace("rd", "").replace("th", "").replace("semester", "").strip()
         
         if db_sem.lower() == req_sem.lower() or db_sem_clean == req_sem_clean:
-            # If we find multiple, take the one with the most subjects
             if len(b.subjects) > max_subjects:
                 target_branch = b
                 max_subjects = len(b.subjects)
             
     if target_branch:
-        print(f"DIAGNOSTIC: SUCCESS! Found {len(target_branch.subjects)} subjects")
         subjects = [
             {'subject': s.subject, 'teacher': s.teacher, 'hours': s.hours, 'type': s.type}
             for s in target_branch.subjects
         ]
         return Response(subjects)
     
-    print(f"DIAGNOSTIC: FAILED. No match found among {len(all_branch_entries)} branch entries.")
     return Response([])
 
 @api_view(['POST'])
 def api_generate_timetable(request):
-    """
-    Expects JSON: {
-        "branch": "CS",
-        "semester": "5",
-        "subjects": [{"subject": "Math", "teacher": "Dr. Smith", "hours": 4, "type": "theory"}, ...]
-    }
-    """
     branch_name = (request.data.get('branch') or '').strip()
     semester = (request.data.get('semester') or '').strip()
-    subjects = request.data.get('subjects')
+    subjects_data = request.data.get('subjects')
 
-    if not subjects:
+    if not subjects_data:
         return Response({"error": "No subjects provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Save to MongoDB (Sync with existing logic)
-    subject_docs = [
-        Subject(subject=s['subject'], teacher=s['teacher'], hours=s['hours'], type=s['type'])
-        for s in subjects
-    ]
-    Branch.objects(branch_name=branch_name, semester=semester).modify(upsert=True, new=True, set__subjects=subject_docs)
+    # Validate each subject has the required data
+    validated_subjects = []
+    for s in subjects_data:
+        name = (s.get('subject') or '').strip()
+        teacher = (s.get('teacher') or '').strip()
+        hours = s.get('hours')
+        type_ = s.get('type')
+        
+        if not name or not teacher or hours is None:
+            return Response({"error": f"Incomplete data for subject '{name or 'Unknown'}'. All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        validated_subjects.append({
+            'subject': name,
+            'teacher': teacher,
+            'hours': int(hours),
+            'type': type_ or 'theory'
+        })
 
-    # Generate timetable
-    headers, table = generate_timetable_logic(subjects)
+    try:
+        # Save to MongoDB
+        subject_docs = [
+            Subject(subject=s['subject'], teacher=s['teacher'], hours=s['hours'], type=s['type'])
+            for s in validated_subjects
+        ]
+        
+        if not branch_name or not semester:
+            return Response({"error": "Branch name and semester are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Prepare JSON-friendly timetable
-    time_slots = ["8-9", "9-10", "10-11", "11-12", "12-1", "1:30-2", "2-3", "3-4", "4-5"]
-    
-    formatted_timetable = []
-    for row in table:
-        day_data = {
-            "day": row[0],
-            "slots": {}
-        }
-        for i, cell in enumerate(row[1:]):
-            if i < len(time_slots):
-                day_data["slots"][time_slots[i]] = cell
-        formatted_timetable.append(day_data)
+        Branch.objects(branch_name=branch_name, semester=semester).modify(
+            upsert=True, 
+            new=True, 
+            set__subjects=subject_docs
+        )
 
-    return Response({
-        "branch": branch_name,
-        "semester": semester,
-        "time_slots": time_slots,
-        "timetable": formatted_timetable
-    })
+        # Generate timetable
+        headers, table = generate_timetable_logic(validated_subjects)
+
+        # Prepare JSON-friendly timetable
+        time_slots = ["8-9", "9-10", "10-11", "11-12", "12-1", "1:30-2", "2-3", "3-4", "4-5"]
+        
+        formatted_timetable = []
+        for row in table:
+            day_data = {
+                "day": row[0],
+                "slots": {}
+            }
+            for i, cell in enumerate(row[1:]):
+                if i < len(time_slots):
+                    day_data["slots"][time_slots[i]] = cell
+            formatted_timetable.append(day_data)
+
+        return Response({
+            "branch": branch_name,
+            "semester": semester,
+            "time_slots": time_slots,
+            "timetable": formatted_timetable
+        })
+    except Exception as e:
+        return Response({"error": f"Backend processing error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # --- EXISTING TEMPLATE VIEWS ---
 
-# Step 0: Home page
 def home(request):
     return render(request, 'index.html')
 
-# Step 1: Select Branch
 def timetable_input(request):
     branches = Branch.objects.only('branch_name')
     if request.method == 'POST':
@@ -185,26 +198,22 @@ def timetable_input(request):
         return redirect('select_semester')
     return render(request, 'branch_input.html', {'branches': branches})
 
-# Step 2: Select Semester
 def select_semester(request):
     if request.method == 'POST':
         semester = request.POST.get('semester')
         request.session['semester'] = semester
-        return redirect('subject_count')  # Redirects to subject count page
+        return redirect('subject_count')
     return render(request, 'select_semester.html')
 
-# NEW Step 3: Enter subject and lab counts (number of subjects and labs)
 def subject_count(request):
     if request.method == 'POST':
         subject_count = int(request.POST.get('subject_count', 0))
         lab_count = int(request.POST.get('lab_count', 0))
         request.session['subject_count'] = subject_count
         request.session['lab_count'] = lab_count
-        return redirect('subject_input')  # or wherever you want to go next
-    
+        return redirect('subject_input')
     return render(request, 'subject_count.html')
 
-# Step 4: Enter subject and lab details
 def subject_input(request):
     subject_count = request.session.get('subject_count', 0)
     lab_count = request.session.get('lab_count', 0)
@@ -224,18 +233,14 @@ def subject_input(request):
             subjects.append({'subject': name, 'teacher': teacher, 'hours': hours, 'type': 'lab'})
 
         request.session['subjects'] = subjects
-
-        # Save to MongoDB
         branch_name = request.session.get('branch')
         subject_docs = [
             Subject(subject=s['subject'], teacher=s['teacher'], hours=s['hours'], type=s['type'])
             for s in subjects
         ]
         Branch.objects(branch_name=branch_name).modify(upsert=True, new=True, set__subjects=subject_docs)
-
         return redirect('generate_timetable')
 
-    # Pass range() objects to template for iteration
     context = {
         'subject_count': subject_count,
         'lab_count': lab_count,
@@ -244,7 +249,6 @@ def subject_input(request):
     }
     return render(request, 'subject_input.html', context)
 
-# Step 5: Generate and display timetable
 def generate_timetable(request):
     subjects = request.session.get('subjects')
     branch = request.session.get('branch', '')
@@ -254,13 +258,7 @@ def generate_timetable(request):
         return HttpResponse("Invalid Request: No subject data found.")
 
     headers, table = generate_timetable_logic(subjects)
-
-    # Define correct and fixed time slots (do NOT derive from headers)
-    time_slots = [
-        "8-9", "9-10", "10-11", "11-12", "12-1",
-        "1:30-2",  # lunch
-        "2-3", "3-4", "4-5"
-    ]
+    time_slots = ["8-9", "9-10", "10-11", "11-12", "12-1", "1:30-2", "2-3", "3-4", "4-5"]
 
     days = []
     timetable = {}
@@ -269,13 +267,9 @@ def generate_timetable(request):
         day = row[0]
         days.append(day)
         timetable[day] = {}
-
-        # Fill the timetable with all expected time slots
         for slot in time_slots:
-            timetable[day][slot] = "—"  # default empty
-
-        # Now fill real values from the `row`
-        for i, cell in enumerate(row[1:]):  # skip day label
+            timetable[day][slot] = "—"
+        for i, cell in enumerate(row[1:]):
             if i < len(time_slots):
                 slot = time_slots[i]
                 timetable[day][slot] = cell
@@ -289,7 +283,6 @@ def generate_timetable(request):
     }
     return render(request, 'display_timetable.html', context)
 
-# Download PDF
 def download_pdf(request):
     subjects = request.session.get('subjects')
     headers, table = generate_timetable_logic(subjects)
@@ -317,7 +310,6 @@ def download_pdf(request):
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename="timetable.pdf")
 
-# Export Excel
 @csrf_exempt
 def export_excel(request):
     subjects = request.session.get('subjects')
@@ -326,7 +318,6 @@ def export_excel(request):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet("Timetable")
-
     header_format = workbook.add_format({'bold': True, 'bg_color': '#0072ff', 'color': 'white'})
 
     for col_num, header in enumerate(headers):
@@ -338,10 +329,8 @@ def export_excel(request):
 
     workbook.close()
     output.seek(0)
-
     return FileResponse(output, as_attachment=True, filename='timetable.xlsx')
 
-# Edit subjects
 def edit_subjects(request):
     branch_name = request.session.get('branch')
     if not branch_name:
@@ -367,11 +356,9 @@ def edit_subjects(request):
 
     return render(request, 'edit_subjects.html', {'subjects': subjects})
 
-# Create a new branch
 def create_branch(request):
     if request.method == 'POST':
         branch_name = request.POST.get('branch_name').strip()
-
         if Branch.objects(branch_name=branch_name).first():
             messages.error(request, f"Branch '{branch_name}' already exists!")
         else:
